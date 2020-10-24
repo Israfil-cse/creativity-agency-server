@@ -29,6 +29,7 @@ client.connect(err => {
   const servicesCollection = client.db("creativeAgency").collection("services");
   const OrderCollection = client.db("creativeAgency").collection("OrderInfo");
   const customarReviewCollection = client.db("creativeAgency").collection("customarReview");
+  const adminCollection = client.db("creativeAgency").collection("addAdmin");
 
 
   // add services fakedata to database
@@ -145,11 +146,28 @@ client.connect(err => {
   // add new admin
   app.post("/addAdmin", (req, res) => {
     const admin = req.body;
-    servicesCollection.insertOne(admin)
+    adminCollection.insertOne(admin)
       .then(result => {
         res.send(result.insertedCount > 0)
       })
   })
+
+
+
+
+
+  app.get('/checkAdmin', (req, res) => {
+    const email = req.query.email;
+    adminCollection.find({email: email})
+      .toArray((err, documents) => {
+        if(documents.length === 0){
+          res.send({admin: false})
+        }else{
+          res.send({admin: true})
+        }
+      })
+  })
+
 
 
 
